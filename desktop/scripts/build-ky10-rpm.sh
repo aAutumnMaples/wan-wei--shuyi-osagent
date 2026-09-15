@@ -28,7 +28,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 REPO="$(git -C "$ROOT" rev-parse --show-toplevel)"
-VERSION="$(node -p "require('$ROOT/package.json').version')"
+VERSION="$(node -p 'require(process.argv[1]).version' "$ROOT/package.json")"
 OUT="${1:-$ROOT/release/ky10}"
 WORK="$(mktemp -d /tmp/ky10-build.XXXXXX)"
 PAYLOAD_TAR="wanwei-shuyi-desktop-${VERSION}-payload.tar.gz"
