@@ -13,9 +13,9 @@
 # ============================================================================
 # wanwei-shuyi-desktop 麒麟 RPM 打包 SPEC
 # 规范依据：《银河麒麟高级服务器操作系统 RPM 包打包规范》V1.7（2025-12-08）
-#   4.1 命名: softname-version-release.ky10.arch.rpm（%{?dist} 在麒麟构建机
+#   4.1 命名: softname-version-release.ky10.arch.rpm（dist 宏在麒麟构建机
 #            自动展开为 .ky10）
-#   5.1  必填字段: Name/Version/Release/Summary/License/%description/%changelog
+#   5.1  必填字段: Name/Version/Release/Summary/License/description/changelog
 #   5.2  安装目录: 第三方自研软件 → /opt/公司域名/自研软件名/
 #   5.3.1 desktop 文件 → /usr/share/applications，以 softname 命名
 #   5.3.2 图标 → /usr/share/icons/hicolor/<尺寸>/apps/（PNG 全尺寸）
@@ -24,6 +24,7 @@
 # 构建输入：desktop/scripts/build-ky10-rpm.sh 产出的载荷 tarball
 #   wanwei-shuyi-desktop-1.0.0-payload.tar.gz（linux-unpacked 全树 + 图标 + 脚本）
 # 首次构建请先阅读 desktop/packaging/ky10/README.md。
+# 注意：注释中不要写字面量宏（如 dist 宏展开写法），rpmbuild 会解析它们。
 
 Name:           wanwei-shuyi-desktop
 Version:        1.0.0
@@ -34,7 +35,7 @@ License:        Mulan-PSL-2.0
 URL:            https://github.com/QianChang-official/wan-wei--shuyi-osagent
 Packager:       aAutumnMaples <2739823745@qq.com>
 Vendor:         WanWei Shuyi Team
-# electron-builder --dir 产出的应用树（chrome-sandbox 需 4755，在 %install 赋权）
+# electron-builder --dir 产出的应用树（chrome-sandbox 需 4755，在 install 段赋权）
 Source0:        %{name}-%{version}-payload.tar.gz
 
 # 已知在 Kylin V10 SP3 / V11 上可用；其他平台未验证
@@ -99,7 +100,7 @@ install -d -m 0755 %{buildroot}%{_sysconfdir}/systemd/user
 install -m 0644 packaging/wanwei-shuyi-desktop.service %{buildroot}%{_sysconfdir}/systemd/user/
 
 %files
-# 应用树（chrome-sandbox 的 4755 由 %install chmod + rpmbuild 载荷记录保留）
+# 应用树（chrome-sandbox 的 4755 由 install 段 chmod 后随载荷记录保留）
 /opt/cn.wanwei/%{name}/
 %attr(4755, root, root) /opt/cn.wanwei/%{name}/chrome-sandbox
 %{_bindir}/%{name}
