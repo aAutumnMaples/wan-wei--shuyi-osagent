@@ -26,8 +26,8 @@
 #          输出默认 desktop/release/ky10/
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-REPO="$(git -C "$ROOT" rev-parse --show-toplevel)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"          # → desktop/
+REPO="$(git -C "$ROOT" rev-parse --show-toplevel)" # → 仓库根
 VERSION="$(node -p 'require(process.argv[1]).version' "$ROOT/package.json")"
 OUT="${1:-$ROOT/release/ky10}"
 WORK="$(mktemp -d /tmp/ky10-build.XXXXXX)"
@@ -87,7 +87,7 @@ mkdir -p "$WORK/payload/app" "$WORK/payload/packaging/icons"
 cp -a "$UNPACKED/." "$WORK/payload/app/"
 cp "$ROOT/packaging/ky10/wanwei-shuyi-desktop.desktop" "$WORK/payload/packaging/"
 cp "$ROOT/packaging/ky10/wanwei-shuyi-desktop.service" "$WORK/payload/packaging/"
-cp "$ROOT"/../build/icons/{16x16,24x24,32x32,48x48,64x64,128x128,256x256,512x512}.png \
+cp "$ROOT"/build/icons/{16x16,24x24,32x32,48x48,64x64,128x128,256x256,512x512}.png \
    "$WORK/payload/packaging/icons/"
 # 归档顶层目录为 payload/（与 SPEC %setup -n payload 对齐）
 tar -czf "$PAYLOAD" -C "$WORK" payload
