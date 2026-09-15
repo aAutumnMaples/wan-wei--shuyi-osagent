@@ -41,6 +41,10 @@ echo "== [0] preflight =="
 command -v node >/dev/null || { echo "FATAL: node not found (need 22.12+)" >&2; exit 1; }
 command -v rpmbuild >/dev/null || { echo "FATAL: rpmbuild not found (dnf install rpm-build)" >&2; exit 1; }
 [ -f "$SPEC_SRC" ] || { echo "FATAL: SPEC missing: $SPEC_SRC" >&2; exit 1; }
+# electron 二进制在 npm ci 的 postinstall 就会下载，镜像变量必须先行导出
+export ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
+export ELECTRON_BUILDER_BINARIES_MIRROR="https://npmmirror.com/mirrors/electron-builder-binaries/"
+export npm_config_registry="https://registry.npmmirror.com"
 
 # 脏树拒绝：与 build-linux.sh 同一纪律
 if git -C "$REPO" status --porcelain 2>/dev/null | grep -qv '^??'; then
@@ -85,12 +89,13 @@ cp "$ROOT/packaging/ky10/wanwei-shuyi-desktop.desktop" "$WORK/payload/packaging/
 cp "$ROOT/packaging/ky10/wanwei-shuyi-desktop.service" "$WORK/payload/packaging/"
 cp "$ROOT"/../build/icons/{16x16,24x24,32x32,48x48,64x64,128x128,256x256,512x512}.png \
    "$WORK/payload/packaging/icons/"
-# payload 顶层 = payload/（与 SPEC %setup -n payload 对齐）
-tar -czf "$PAYLOAD" -C "$WORK/payload" .
+# 归档顶层目录为 payload/（与 SPEC %setup -n payload 对齐）
+tar -czf "$PAYLOAD" -C "$WORK" payload
 
 echo "== [6] rpmbuild =="
 cp "$PAYLOAD" "$RPMBUILD/SOURCES/"
 cp "$SPEC_SRC" "$RPMBUILD/SPECS/"
+mkdir -p "$OUT.tmp"
 rpmbuild -bb \
   --define "_topdir $RPMBUILD" \
   --define "_rpmdir $OUT.tmp" \

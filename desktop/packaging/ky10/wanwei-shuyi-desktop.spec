@@ -37,9 +37,8 @@ Vendor:         WanWei Shuyi Team
 # electron-builder --dir 产出的应用树（chrome-sandbox 需 4755，在 %install 赋权）
 Source0:        %{name}-%{version}-payload.tar.gz
 
-BuildArch:      x86_64
-ExclusiveArch:  x86_64
 # 已知在 Kylin V10 SP3 / V11 上可用；其他平台未验证
+# （二进制载荷在 x86_64 构建机上默认出 x86_64 包，无需 BuildArch）
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 # 后端依赖由应用首启自建 venv（系统 python3 + pip），SPEC 仅声明硬依赖。
