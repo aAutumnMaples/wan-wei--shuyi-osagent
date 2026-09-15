@@ -26,6 +26,8 @@
 # 首次构建请先阅读 desktop/packaging/ky10/README.md。
 # 注意：注释中不要写字面量宏（如 dist 宏展开写法），rpmbuild 会解析它们。
 
+%define debug_package %{nil}
+
 Name:           wanwei-shuyi-desktop
 Version:        1.0.0
 Release:        1%{?dist}
@@ -102,7 +104,6 @@ install -m 0644 packaging/wanwei-shuyi-desktop.service %{buildroot}%{_sysconfdir
 %files
 # 应用树（chrome-sandbox 的 4755 由 install 段 chmod 后随载荷记录保留）
 /opt/cn.wanwei/%{name}/
-%attr(4755, root, root) /opt/cn.wanwei/%{name}/chrome-sandbox
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/%{name}.png
@@ -130,7 +131,7 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %changelog
-* Mon Sep 15 2026 aAutumnMaples <2739823745@qq.com> - 1.0.0-1
+* Tue Sep 15 2026 aAutumnMaples <2739823745@qq.com> - 1.0.0-1
 - Initial release for Kylin Linux Advanced Server V10 SP3 / V11
 - 按麒麟 RPM 打包规范 V1.7 打包：/opt/cn.wanwei/ 域名式安装目录、
   /usr/share/applications desktop 文件、hicolor 全尺寸 PNG 图标、
